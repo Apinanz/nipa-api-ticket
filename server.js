@@ -3,6 +3,10 @@ let app = express();
 let bodyParser = require('body-parser');
 let mysql = require('mysql');
 const { ORDER } = require('mysql/lib/PoolSelector');
+let port = process.env.PORT || 3000;
+const emailvalidator = require("email-validator");
+const validatePhoneNumber = require("validate-phone-number-node-js");
+const listStatus = new Set(["pending", "accepted", "resolved", "rejected"]);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -116,8 +120,7 @@ app.post('/tickets/create', (req, res) => {
     let address = req.body.address;
     let telephone = req.body.telephone;
     let email = req.body.email;
-    const emailvalidator = require("email-validator");
-    const validatePhoneNumber = require("validate-phone-number-node-js");
+    
 
     // validation
     if (!title || !description || !name || !lastname || !address) {
@@ -163,9 +166,7 @@ app.get('/tickets/filter/:status', (req, res) => {
 //update infomation ticket by id
 app.put('/tickets/edit', (req, res) => {
     let id = req.body.id;
-    const emailvalidator = require("email-validator");
-    const validatePhoneNumber = require("validate-phone-number-node-js");
-    const listStatus = new Set(["pending", "accepted", "resolved", "rejected"]);
+    
 
     //validation
     if (req.body['email'] != undefined && !emailvalidator.validate(req.body['email'])) {
