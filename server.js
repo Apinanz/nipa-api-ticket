@@ -3,9 +3,25 @@ let app = express();
 let bodyParser = require('body-parser');
 let mysql = require('mysql');
 const { ORDER } = require('mysql/lib/PoolSelector');
+let port = process.env.PORT || 3000;
+const emailvalidator = require("email-validator");
+const validatePhoneNumber = require("validate-phone-number-node-js");
+const listStatus = new Set(["pending", "accepted", "resolved", "rejected"]);
 
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader("Content-Type", "application/json");
+    next();
+});
+
+app.listen(port, () => {
+    console.log('Node App is running on port 3000')
+})
 
 // homepage route
 app.get('/', (req, res) => {
@@ -18,10 +34,10 @@ app.get('/', (req, res) => {
 
 // connection to masql database
 let dbCon = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'nodejs_api'
+    host: 'us-cdbr-east-05.cleardb.net',
+    user: 'b38cc62c10c6e6',
+    password: 'fab81686',
+    database: 'heroku_7772d4482dedb38'
 
 })
 dbCon.connect();
@@ -101,6 +117,7 @@ app.post('/tickets/create', (req, res) => {
     const emailvalidator = require("email-validator");
     const validatePhoneNumber = require("validate-phone-number-node-js");
 
+   
     // validation
     if (!title || !description || !name || !lastname || !address) {
         return res.status(400).send({ error: true, message: "Please provide tickets title, description, name, lastname  and address" });
@@ -109,17 +126,20 @@ app.post('/tickets/create', (req, res) => {
     } else if (!telephone || !validatePhoneNumber.validate(telephone)) {
         return res.status(400).send({ error: true, message: "Plrase provide your telephone number or invalid telephone number" });
     } else {
-        dbCon.query('INSERT INTO tickets (title,description,name,lastname,address,telephone,email) VALUE(?,?,?,?,?,?,?)', [title, description, name, lastname, address, telephone, email], (error, result, fields) => {
-            if (error) throw error;
-            return res.send({ error: false, data: result, message: "Ticket successfully added" });
-        })
+        dbCon.query("SELECT COUNT(*) as id from tickets",(error, results, fields) => {
+            var id = results[0].id + 1;
+            dbCon.query('INSERT INTO tickets (id,title,description,name,lastname,address,telephone,email) VALUE(?,?,?,?,?,?,?,?)', [id,title, description, name, lastname, address, telephone, email], (error, result, field) => {
+                if (error) throw error;
+                return res.send({ error: false, data: result, message: "Ticket successfully added" });
+            })
+        })    
 
     }
 })
 
 //retrieve ticket by status
 app.get('/tickets/filter/:status', (req, res) => {
-    let status = req.body.status;
+    let status = req.params.status;
 
     if (!status) {
         return res.status(400).send({ error: true, message: 'Please provide status of ticket' })
@@ -141,9 +161,7 @@ app.get('/tickets/filter/:status', (req, res) => {
 //update infomation ticket by id
 app.put('/tickets/edit', (req, res) => {
     let id = req.body.id;
-    const emailvalidator = require("email-validator");
-    const validatePhoneNumber = require("validate-phone-number-node-js");
-    const listStatus = new Set(["pending", "accepted", "resolved", "rejected"]);
+
 
     //validation
     if (req.body['email'] != undefined && !emailvalidator.validate(req.body['email'])) {
@@ -186,9 +204,3 @@ app.put('/tickets/edit', (req, res) => {
 
 })
 
-
-app.listen(3000, () => {
-    console.log('Node App is running on port 3000')
-})
-
-module.exports = app;
