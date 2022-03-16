@@ -7,7 +7,7 @@ const { ORDER } = require('mysql/lib/PoolSelector');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-<<<<<<< HEAD
+
 app.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT');
@@ -21,8 +21,7 @@ app.listen(port, () => {
     console.log('Node App is running on port '+port)
 })
 
-=======
->>>>>>> parent of ae47b35 (initial commit)
+
 // homepage route
 app.get('/', (req, res) => {
     return res.send({
@@ -34,19 +33,13 @@ app.get('/', (req, res) => {
 
 // connection to masql database
 let dbCon = mysql.createConnection({
-<<<<<<< HEAD
+
     host: 'app-ce6be604-df9b-4026-872d-1c3b89294f67-do-user-11127953-0.b.db.ondigitalocean.com',
     user: 'node-api-nipa',
     password: 'UCLsTWTo3aK7o4mB',
     database: 'node-api-nipa',
     port : 25060,
     sslmode  : require
-=======
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'nodejs_api'
->>>>>>> parent of ae47b35 (initial commit)
 
 })
 dbCon.connect();
@@ -134,7 +127,7 @@ app.post('/tickets/create', (req, res) => {
     } else if (!telephone || !validatePhoneNumber.validate(telephone)) {
         return res.status(400).send({ error: 3, message: "Please provide your telephone number or invalid telephone number" });
     } else {
-<<<<<<< HEAD
+
         dbCon.query("SELECT COUNT(*) as id from tickets",(error, results, fields) => {
             var id = results[0].id + 1;
             dbCon.query('INSERT INTO tickets (id,title,description,name,lastname,address,telephone,email) VALUE(?,?,?,?,?,?,?,?)', [id,title, description, name, lastname, address, telephone, email], (error, result, field) => {
@@ -142,12 +135,6 @@ app.post('/tickets/create', (req, res) => {
                 return res.send({ error: 0, data: result, message: "Ticket successfully added" });
             })
         })    
-=======
-        dbCon.query('INSERT INTO tickets (title,description,name,lastname,address,telephone,email) VALUE(?,?,?,?,?,?,?)', [title, description, name, lastname, address, telephone, email], (error, result, fields) => {
-            if (error) throw error;
-            return res.send({ error: false, data: result, message: "Ticket successfully added" });
-        })
->>>>>>> parent of ae47b35 (initial commit)
 
     }
 })
@@ -219,11 +206,6 @@ app.put('/tickets/edit', (req, res) => {
 
 
 
-})
-
-
-app.listen(3000, () => {
-    console.log('Node App is running on port 3000')
 })
 
 module.exports = app;

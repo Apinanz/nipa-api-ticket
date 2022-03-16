@@ -2,7 +2,7 @@
   "name": "nipa",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server"
@@ -17,11 +17,9 @@
     "mysql": "^2.18.1",
     "nodemon": "^2.0.15",
     "validate-phone-number-node-js": "^0.0.1"
-<<<<<<< HEAD
+
   },
   "engines": {
     "node": "17.6.0"
-=======
->>>>>>> parent of ae47b35 (initial commit)
   }
 }
